@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30517.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sudoku_Manger", "Sudoku_Manger\Sudoku_Manger.csproj", "{4AB08822-5FA0-4CF1-B825-9225328FB463}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "suduku_test", "suduku_test\suduku_test.csproj", "{ABD2960D-EA78-4098-A323-2B90B4C9658C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4AB08822-5FA0-4CF1-B825-9225328FB463}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AB08822-5FA0-4CF1-B825-9225328FB463}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AB08822-5FA0-4CF1-B825-9225328FB463}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AB08822-5FA0-4CF1-B825-9225328FB463}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABD2960D-EA78-4098-A323-2B90B4C9658C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABD2960D-EA78-4098-A323-2B90B4C9658C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABD2960D-EA78-4098-A323-2B90B4C9658C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABD2960D-EA78-4098-A323-2B90B4C9658C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8B1F21AD-C4F5-46F5-A301-B5082B599BF2}
+	EndGlobalSection
+EndGlobal
