@@ -15,6 +15,7 @@ namespace Sudoku_Manger
         private int[,] sudokuClues;
         private List<int>[,] constraints;
         private bool[,] isConstrainted;
+        int sqrt;
 
         public Sudoku_manger(int sudokuRegionSize = 3)
         {
@@ -26,6 +27,7 @@ namespace Sudoku_Manger
             Row_size = (int)(Math.Pow(sudokuRegionSize, 2.0));
             Column_Size = (int)(Math.Pow(sudokuRegionSize, 2.0));
             Sudoku_Size = (int)(Math.Pow(sudokuRegionSize, 2.0));
+            sqrt = sudokuRegionSize;
         }
         private void Create_Sudoku()
         {
@@ -83,7 +85,7 @@ namespace Sudoku_Manger
         public void CreateFullBoard()
         {
             SetBoardToZero();
-            FillBoard();
+            while (FillBoard() == false) ;
             RemoveValues();
         }
         private void SetBoardToZero()
@@ -103,7 +105,7 @@ namespace Sudoku_Manger
                 }
             }
         }
-        private void FillBoard()
+        private bool FillBoard()
         {
             Random rng = new Random();
             for (int i = 0; i < Row_size; i++)
@@ -114,16 +116,14 @@ namespace Sudoku_Manger
                     {
                         if (constraints[i, j].Count == 0)
                         {
-                            Console.WriteLine("failed");
-                            Console.WriteLine();
-                            CreateFullBoard();
-                            return;
+                            return false;
                         }
                         int value = rng.Next(0, constraints[i, j].Count);
                         SetNum(i, j, constraints[i, j][value]);
                     }
                 }
             }
+            return true;
         }
         private void RemoveValues()
         {
@@ -142,9 +142,9 @@ namespace Sudoku_Manger
             }
         }
 
-        private void RemoveRandomNumbers() 
+        private void RemoveRandomNumbers()
         {
-            
+
             int counter = 0;
             do
             {
@@ -152,7 +152,7 @@ namespace Sudoku_Manger
                 {
                     counter = 0;
                 }
-                else 
+                else
                 {
                     counter++;
                 }
@@ -161,7 +161,7 @@ namespace Sudoku_Manger
             while (counter < 10);
         }
         //removes random number and check if board is solvable restore org value if not solvable
-        private bool RemoveRandNumAndCheck() 
+        private bool RemoveRandNumAndCheck()
         {
             Random rng = new Random();
             int row = rng.Next(0, Sudoku_Size);
@@ -197,7 +197,7 @@ namespace Sudoku_Manger
             return true;
         }
         //restore playet suduke
-        private void RestoreBoard() 
+        private void RestoreBoard()
         {
             for (int i = 0; i < Row_size; i++)
             {
@@ -227,7 +227,6 @@ namespace Sudoku_Manger
             {
                 con.Add(i);
             }
-            int sqrt = (int)Math.Sqrt(Sudoku_Size);
             int numOfBoxRow = row / sqrt;
             int numOfBoxCuolmn = column / sqrt;
             int rowi = 0;
@@ -293,7 +292,6 @@ namespace Sudoku_Manger
         }
         private void RemoveConstraintFromRegion(int row, int column, int value)
         {
-            int sqrt = (int)Math.Sqrt(Sudoku_Size);
             int numOfBoxRow = row / sqrt;
             int numOfBoxCuolmn = column / sqrt;
             int rowi = 0;
@@ -384,7 +382,6 @@ namespace Sudoku_Manger
         private void SortCountersInRow(int[] rowCounters, int[,] columnCounters, int[,] regionCounters, int row)
         {
             const int FACTOR = 1;
-            int sqrt = (int)Math.Sqrt(Sudoku_Size);
             for (int j = 0; j < Column_Size; j++)
             {
                 if (sudokuPlayer[row, j] == 0)
@@ -455,6 +452,7 @@ namespace Sudoku_Manger
             }
             return false;
         }
+        //UNfinished #TODO
         private bool SetRegionAndCheckCandidateLines(int[,] regionCounters, int Region, int Value)
         {
             if (regionCounters[Region, Value] >= 1 && regionCounters[Region, Value] <= Math.Sqrt(Sudoku_Size))
@@ -469,7 +467,7 @@ namespace Sudoku_Manger
                 }
                 else
                 {
-                    return CandidateLines(regionCounters, Region, Value);
+                    //TODO  return  add candidate and doublr line;
                 }
 
             }
@@ -477,7 +475,7 @@ namespace Sudoku_Manger
         }
         private bool SetRegion(int regionNumber, int Value)
         {
-            int sqrt = (int)Math.Sqrt(Sudoku_Size);
+
             int row = regionNumber / 3;
             int column = regionNumber % 3;
             row *= 3;
@@ -495,97 +493,151 @@ namespace Sudoku_Manger
             }
             return false;
         }
-        //finds the posible first candidate line and than looks at the row aqnd coulms to check candidate line
-        private bool CandidateLines(int[,] regionCounters, int regionNumber, int Value)
+
+        private bool DoubleLineRegion()
         {
-            int countOfNumInRegion = regionCounters[regionNumber, Value];
-            int sqrt = (int)Math.Sqrt(Sudoku_Size);
-            int row = regionNumber / 3;
-            int column = regionNumber % 3;
+            List<int>[] regionRowConstrains;
+            List<int> constrainsInBoth = new List<int>();
+            for (int i = 0; i < Sudoku_Size - sqrt; i++)
+            {
+                regionRowConstrains = GetLineConstarinsFromRegionRow(i);
+                int[] countNum = GetNumCounter(regionRowConstrains);
+                if (CheckForOneRowInRegion(regionRowConstrains, countNum, i))
+                {
+                    return true;
+                }
+                for (int j = i + sqrt; j < Sudoku_Size; j += sqrt)
+                {
+                    List<int>[] checkRegionBelow = GetLineConstarinsFromRegionRow(j);
+                    if (CheckForOneRowInRegion(checkRegionBelow,GetNumCounter(checkRegionBelow), j))
+                    {
+                        return true;
+                    }
+                    constrainsInBoth = GetConstrainInBothRegions(regionRowConstrains, checkRegionBelow);
+                    for (int z = 0; z < constrainsInBoth.Count; z++)
+                    {
+
+                    }
+                }
+            }
+            return false;
+        }
+        private List<int>[] GetLineConstarinsFromRegionRow(int regionNum)
+        {
+            int row = regionNum / sqrt;
+            int column = regionNum % sqrt;
+            row *= sqrt;
+            column *= sqrt;
+            List<int>[] regionRowConstrains = new List<int>[sqrt];
+            for (int i = 0; i < sqrt; i++)
+            {
+                regionRowConstrains[i] = new List<int>();
+                for (int j = 0; j < sqrt; j++)
+                {
+                    int len = constraints[i + row, column + j].Count;
+                    for (int z = 0; z < len; z++)
+                    {
+                        if (!regionRowConstrains[i].Contains(constraints[j + row, column + i][z]))
+                        {
+                            regionRowConstrains[i].Add(constraints[j + row, column + i][z]);
+                        }
+                    }
+
+                }
+
+            }
+
+            return regionRowConstrains;
+        }
+        private int[] GetNumCounter(List<int>[] regionRowConstrains)
+        {
+            int[] countNum = new int[Sudoku_Size];
+            for (int i = 0; i < Sudoku_Size; i++)
+            {
+                countNum[i] = 0;
+            }
+            for (int i = 0; i < regionRowConstrains.Length; i++)
+            {
+                for (int j = 0; j < regionRowConstrains[i].Count; j++)
+                {
+                    countNum[regionRowConstrains[i][j] - 1]++;
+                }
+            }
+            return countNum;
+        }
+        //removes all cobstrains that happen 1 or sqrt time and remove candidate lines
+        private bool CheckForOneRowInRegion(List<int>[] regionRowConstrains, int[] countNum, int regionNum)
+        {
+            for (int i = 0; i < Sudoku_Size; i++)
+            {
+                if (countNum[i] == 1 || countNum[i] == sqrt)
+                {
+                    for (int j = 0; j < sqrt; j++)
+                    {
+                        regionRowConstrains[j].Remove(i + 1);
+                    }
+                    if (countNum[i] == 1)
+                    {
+                        SingleCandidate(regionNum, i + 1);
+                        return true;
+                    }
+                }
+
+            }
+            return false;
+        }
+
+        private List<int> GetConstrainInBothRegions(List<int>[] regionRowConstrains1, List<int>[] regionRowConstrains2)
+        {
+            List<int> constrainsInBoth = new List<int>();
+            for (int i = 1; i <= Sudoku_Size; i++)
+            {
+                constrainsInBoth.Add(i);
+            }
+            for (int i = 0; i < sqrt; i++)
+            {
+                for (int j = 1; j <= Sudoku_Size; j++)
+                {
+                    if (regionRowConstrains1[i].Contains(j) != regionRowConstrains2[i].Contains(j))
+                    {
+                        constrainsInBoth.Remove(j);
+                    }
+                }
+            }
+            return constrainsInBoth;
+        }
+
+        private void SingleCandidate(int regionNum, int value)
+        {
+            int row = regionNum / sqrt;
+            int column = regionNum % sqrt;
             row *= 3;
             column *= 3;
-            for (int inRegionRow = 0; inRegionRow < sqrt; inRegionRow++)
+            for (int i = row; i < Sudoku_Size; i++)
             {
-                for (int inRegionColumn = 0; inRegionColumn < sqrt; inRegionColumn++)
+                for (int j = column; j < Sudoku_Size; j++)
                 {
-                    //find first candidate line
-                    if (constraints[inRegionRow + row, inRegionColumn + column].Contains(Value + 1) && sudokuPlayer[inRegionRow + row, inRegionColumn + column] != 0)
+                    if (constraints[i, j].Contains(value))
                     {
-                        if (SetRegoinRow(inRegionRow, countOfNumInRegion, row, inRegionColumn, column, Value + 1))
-                        {
-                            return true;
-                        }
-                        if (SetRegionColumn(inRegionRow, countOfNumInRegion, row, inRegionColumn, column, Value + 1))
-                        {
-                            return true;
-                        }
+                        RemoveLine(i, regionNum, value);
+                        return;
                     }
                 }
             }
-            return false;
         }
-        //cheks the row for additinal candidate line 
-        private bool SetRegoinRow(int inRegionRow, int countOfNumInRegion, int row, int inRegionColumn, int column, int Value)
+        private void RemoveLine(int row, int regionNum, int value)
         {
-            int sqrt = (int)Math.Sqrt(Sudoku_Size);
-            int counter = 1;
-            int index = 1;
-            while (inRegionRow + index < sqrt && counter < countOfNumInRegion)
+            int column = regionNum % sqrt;
+            column *= 3;
+            for (int i = 0; i < Column_Size; i++)
             {
-                if (constraints[inRegionRow + row + index, inRegionColumn + column].Contains(Value))
+                if (i < column || i >= column + sqrt)
                 {
-                    if (++counter == countOfNumInRegion)
-                    {
-                        RemoveConstraintFromRow(inRegionColumn + column, Value);
-                        constraints[inRegionRow + row, inRegionColumn + column].Add(Value);
-                        if (countOfNumInRegion == sqrt)
-                        {
-                            constraints[inRegionRow + row + index, inRegionColumn + column].Add(Value);
-                            constraints[inRegionRow + row + index - 1, inRegionColumn + column].Add(Value);
-                        }
-                        else if (countOfNumInRegion != 1)
-                        {
-                            constraints[inRegionRow + row + index, inRegionColumn + column].Add(Value);
-                        }
-                        SetNum(0, 0, 0);
-                        return true;
-                    }
+                    constraints[row, i].Remove(value);
                 }
-                index++;
             }
-            return false;
         }
-        //cheks the column for additinal candidate line 
-        private bool SetRegionColumn(int inRegionRow, int countOfNumInRegion, int row, int inRegionColumn, int column, int Value)
-        {
-            int sqrt = (int)Math.Sqrt(Sudoku_Size);
-            int counter = 1;
-            int index = 1;
-            while (inRegionColumn + index < sqrt && counter < countOfNumInRegion)
-            {
-                if (constraints[inRegionRow + row, inRegionColumn + column + index].Contains(Value))
-                {
-                    if (++counter == countOfNumInRegion)
-                    {
-                        RemoveConstraintFromColumn(inRegionRow + row, Value);
-                        constraints[inRegionRow + row, inRegionColumn + column].Add(Value);
-                        if (countOfNumInRegion == sqrt)
-                        {
-                            constraints[inRegionRow + row, inRegionColumn + column + index].Add(Value);
-                            constraints[inRegionRow + row, inRegionColumn + column + index - 1].Add(Value);
-                        }
-                        else if (countOfNumInRegion != 1)
-                        {
-                            constraints[inRegionRow + row, inRegionColumn + column + index].Add(Value);
-                        }
-                        SetNum(0, 0, 0);
-                        return true;
-                    }
-                }
-                index++;
-            }
-            return false;
-        }
+
         public override string ToString()
         {
             string data = "";
