@@ -8,8 +8,8 @@ namespace suduku_test
         static void Main(string[] args)
         {
             Sudoku_manger pain = new Sudoku_manger();
-            pain.TestDoubleLines();
-            //Console.WriteLine(pain.ToString());
+            pain.CreateFullBoard();
+            Console.WriteLine(pain.ToString());
         }
     }
 }
