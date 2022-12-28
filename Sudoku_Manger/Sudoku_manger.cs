@@ -1085,7 +1085,6 @@ namespace Sudoku_Manger
         }
 
         #endregion
-
         public override string ToString()
         {
             string data = "";
