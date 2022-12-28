@@ -12,7 +12,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "suduku_test", "suduku_test\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SudokuApp", "SudokuApp\SudokuApp.csproj", "{C043F368-D77C-4780-907D-D3860F8C08DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQL_Manger", "SQL_Manger\SQL_Manger.csproj", "{4306CF80-DA04-4E89-B363-754450F00331}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQL_MANGER", "SQL_MANGER\SQL_MANGER.csproj", "{5F0170E0-6F66-49F4-86E8-8FC0DA0E117E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,10 +32,10 @@ Global
 		{C043F368-D77C-4780-907D-D3860F8C08DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C043F368-D77C-4780-907D-D3860F8C08DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C043F368-D77C-4780-907D-D3860F8C08DF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4306CF80-DA04-4E89-B363-754450F00331}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4306CF80-DA04-4E89-B363-754450F00331}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4306CF80-DA04-4E89-B363-754450F00331}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4306CF80-DA04-4E89-B363-754450F00331}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F0170E0-6F66-49F4-86E8-8FC0DA0E117E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F0170E0-6F66-49F4-86E8-8FC0DA0E117E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F0170E0-6F66-49F4-86E8-8FC0DA0E117E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F0170E0-6F66-49F4-86E8-8FC0DA0E117E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

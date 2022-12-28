@@ -80,10 +80,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SQL_Manger\SQL_Manger.csproj">
-      <Project>{4306cf80-da04-4e89-b363-754450f00331}</Project>
-      <Name>SQL_Manger</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sudoku_Manger\Sudoku_Manger.csproj">
       <Project>{4ab08822-5fa0-4cf1-b825-9225328fb463}</Project>
       <Name>Sudoku_Manger</Name>

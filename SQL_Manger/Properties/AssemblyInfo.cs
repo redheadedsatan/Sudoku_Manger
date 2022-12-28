@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SQL_Manger")]
+[assembly: AssemblyTitle("SQL_MANGER")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("SQL_Manger")]
+[assembly: AssemblyProduct("SQL_MANGER")]
 [assembly: AssemblyCopyright("Copyright ©  2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("4306cf80-da04-4e89-b363-754450f00331")]
+[assembly: Guid("5f0170e0-6f66-49f4-86e8-8fc0da0e117e")]
 
 // Version information for an assembly consists of the following four values:
 //

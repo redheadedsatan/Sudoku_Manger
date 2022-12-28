@@ -7,11 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\SQL_Manger\SQL_Manger.csproj" />
+    <ProjectReference Include="..\SQL_MANGER\SQL_MANGER.csproj" />
     <ProjectReference Include="..\Sudoku_Manger\Sudoku_Manger.csproj" />
   </ItemGroup>
 

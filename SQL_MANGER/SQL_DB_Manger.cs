@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace Sudoku_Manger
+namespace SQL_MANGER
 {
-    class SQL_manger
+    public class SQL_DB_Manger
     {
         private static string DB_NAME = "TEST";
         private static string CONNECTIONSTRING = "Server=localhost;Database=master;Trusted_Connection=True;";
@@ -19,10 +21,15 @@ namespace Sudoku_Manger
             {
                 sqlconnection = new SqlConnection(CONNECTIONSTRING);
             }
-            if (!CheckDatabaseExists())
+            try
             {
                 CreateDataBase();
             }
+            catch(Exception e) 
+            {
+                Console.WriteLine(e.Message);
+            }
+            
             sqlconnection.Open();
         }
         private static bool CheckDatabaseExists()
@@ -30,8 +37,9 @@ namespace Sudoku_Manger
             bool result = false;
             try
             {
+                SqlConnection sqlconnectionCheck = new SqlConnection("server = (local)\\SQLEXPRESS; Trusted_Connection = yes");
                 string sqlCreateDBQuery = "SELECT database_id FROM sys.databases WHERE Name = " + DB_NAME;
-                using (sqlconnection)
+                using (sqlconnectionCheck)
                 {
                     using (SqlCommand sqlCmd = new SqlCommand(sqlCreateDBQuery, sqlconnection))
                     {
@@ -46,7 +54,7 @@ namespace Sudoku_Manger
                             int.TryParse(resultObj.ToString(), out databaseID);
                         }
 
-                        sqlconnection.Close();
+                        sqlconnectionCheck.Close();
 
                         result = (databaseID > 0);
                     }
@@ -92,7 +100,7 @@ namespace Sudoku_Manger
         }
         public static void CreateTable()
         {
-            string SQLcmd = "CREATE TABLE sudoku(ID INT PRIMARY KEY INDENTITY, NAME VARCHAR(50) NOT NULL, SUDOKUFULL TINYTEXT, SUDOKUCLUES TINYTEXT, SUDOKUPLAYER TINYTEXT)";
+            string SQLcmd = "CREATE TABLE sudoku(ID INTEGER PRIMARY KEY IDENTITY, NAME VARCHAR(50) NOT NULL, SUDOKUFULL VARCHAR(200), SUDOKUCLUES VARCHAR(200), SUDOKUPLAYER VARCHAR(200))";
             try
             {
                 Open();
@@ -112,3 +120,4 @@ namespace Sudoku_Manger
         }
     }
 }
+
