@@ -40,11 +40,15 @@ namespace Sudoku_Manger
 
         public void CreateFullBoard()
         {
-            SetBoardToZero();
-            while (FillBoard() == false) ;
-            CheckSet_andstop();
+            do
+            {
+                SetBoardToZero();
+            }
+            while (FillBoard() == false);
+
+            //CheckSet_andstop();
             RemoveValues();
-            CheckSet_andstop();
+            //CheckSet_andstop();
         }
         private void SetBoardToZero()
         {
@@ -88,17 +92,19 @@ namespace Sudoku_Manger
             if (value > 0 && value <= Sudoku_Size)
             {
                 sudokuPlayer[row, column] = value;
-                RemoveConstraints(row, column, sudokuPlayer[row, column]);
+                RemoveConstraints(row, column, value);
             }
-            
+
             //CheckSet_andstop();
 
-            if (CheckForSinglePostion())
+            if (CheckForSingleCandidate())
             {
+
                 return;
             }
-            else if (CheckForSingleCandidate())
+            else if (CheckForSinglePostion())
             {
+
                 return;
             }
             else if (DoubleLineRegionCandidateLine())
@@ -107,6 +113,7 @@ namespace Sudoku_Manger
             }
             else if (NakedLines())
             {
+
                 return;
             }
         }
@@ -142,7 +149,7 @@ namespace Sudoku_Manger
             int columni = 0;
             for (int i = 0; i < Sudoku_Size; i++)
             {
-                constraints[numOfBoxRow * 3 + rowi, numOfBoxCuolmn * 3 + columni].Remove(value);
+                constraints[numOfBoxRow * sqrt + rowi, numOfBoxCuolmn * sqrt + columni].Remove(value);
                 rowi++;
                 if (rowi == sqrt)
                 {
@@ -154,6 +161,29 @@ namespace Sudoku_Manger
                     rowi = 0;
                 }
             }
+        }
+        #endregion
+
+
+        #region singleCandidate
+        private bool CheckForSingleCandidate()
+        {
+            for (int i = 0; i < Row_size; i++)
+            {
+                for (int j = 0; j < Column_Size; j++)
+                {
+                    if (sudokuPlayer[i, j] == 0)
+                    {
+                        if (constraints[i, j].Count == 1)
+                        {
+                            
+                            SetNum(i, j, constraints[i, j][0]);
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
         #endregion
 
@@ -220,7 +250,7 @@ namespace Sudoku_Manger
                         {
                             rowCounters[i - FACTOR]++;
                             columnCounters[j, i - FACTOR]++;
-                            regionCounters[(int)(row / sqrt + Math.Floor((double)j / sqrt) * sqrt), i - FACTOR]++;
+                            regionCounters[(int)(sqrt * (Math.Floor((double)row / sqrt)) + Math.Floor((double)j / sqrt)), i - FACTOR]++;
                         }
                     }
                 }
@@ -237,6 +267,7 @@ namespace Sudoku_Manger
                     {
                         if (constraints[row, z].Contains(j + 1))
                         {
+                           
                             SetNum(row, z, j + 1);
                             return true;
                         }
@@ -265,15 +296,16 @@ namespace Sudoku_Manger
             }
             return false;
         }
-        private bool SetCoulmn(int[,] columnCounters, int coulmn, int value)
+        private bool SetCoulmn(int[,] columnCounters, int column, int value)
         {
-            if (columnCounters[coulmn, value] == 1)
+            if (columnCounters[column, value] == 1)
             {
                 for (int i = 0; i < Row_size; i++)
                 {
-                    if (constraints[i, coulmn].Contains(value))
+                    if (constraints[i, column].Contains(value + 1))
                     {
-                        SetNum(i, coulmn, value + 1);
+                       
+                        SetNum(i, column, value + 1);
                         return true;
                     }
                 }
@@ -308,6 +340,7 @@ namespace Sudoku_Manger
                 {
                     if (constraints[inRegionRow + row, inRegionColumn + column].Contains(Value + 1))
                     {
+                        
                         SetNum(inRegionRow + row, inRegionColumn + column, Value + 1);
                         return true;
                     }
@@ -317,26 +350,6 @@ namespace Sudoku_Manger
         }
         #endregion
 
-        #region singleCandidate
-        private bool CheckForSingleCandidate()
-        {
-            for (int i = 0; i < Row_size; i++)
-            {
-                for (int j = 0; j < Column_Size; j++)
-                {
-                    if (sudokuPlayer[i, j] == 0)
-                    {
-                        if (constraints[i, j].Count == 1)
-                        {
-                            SetNum(i, j, constraints[i, j][0]);
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-        #endregion
 
         #region DoubleLines
         private bool DoubleLineRegionCandidateLine()
@@ -479,6 +492,7 @@ namespace Sudoku_Manger
                     {
                         if (RemoveDoubleLine(region, j, constrainsInBothRow[z], regionRowConstrains, true))
                         {
+
                             SetNum(0, 0, 0);
                             remove = true;
                         }
@@ -581,7 +595,9 @@ namespace Sudoku_Manger
                     {
                         if (RemoveDoubleLine(region, j, constrainsInBothCoulmn[z], regionCoulmnConstrains, false))
                         {
+
                             SetNum(0, 0, 0);
+                            
                             remove = true;
                         }
                     }
@@ -609,6 +625,7 @@ namespace Sudoku_Manger
                             if (RemoveLineOutsideRegion(j, regionNum, value, isRow))
                             {
                                 SetNum(0, 0, 0);
+                          
                                 return true;
                             }
                         }
@@ -617,6 +634,7 @@ namespace Sudoku_Manger
                             if (RemoveLineOutsideRegion(i, regionNum, value, isRow))
                             {
                                 SetNum(0, 0, 0);
+                             
                                 return true;
                             }
                         }
@@ -698,7 +716,7 @@ namespace Sudoku_Manger
                 {
                     if (RemoveNakedLine(constraints[index, i], rowCells, index, true))
                     {
-                        
+
                         removed = true;
                     }
                 }
@@ -783,7 +801,7 @@ namespace Sudoku_Manger
                         {
                             if (constraints[line, i].Remove(remove[j]))
                             {
-                                
+
                                 removed = true;
                             }
                         }
@@ -817,7 +835,7 @@ namespace Sudoku_Manger
 
                             if (constraints[i, j].Remove(remove[z]))
                             {
-                                
+
                                 removed = true;
                             }
 
@@ -849,32 +867,46 @@ namespace Sudoku_Manger
         }
         private void RemoveRandomNumbers()
         {
-
+            bool prv = true;
             int counter = 0;
             do
             {
-                if (RemoveRandNumAndCheck())
+                if (RemoveRandNumAndCheck(prv))
                 {
                     counter = 0;
+                    prv = true;
                 }
                 else
                 {
+                    prv = false;
                     counter++;
                 }
                 RestoreBoard();
+
             }
             while (counter < 10);
         }
         //removes random number and check if board is solvable restore org value if not solvable
-        private bool RemoveRandNumAndCheck()
+        private bool RemoveRandNumAndCheck(bool prv)
         {
+            int row;
+            int column;
             Random rng = new Random();
-            int row = rng.Next(0, Sudoku_Size);
-            int column = rng.Next(0, Sudoku_Size);
+
+            row = rng.Next(0, Sudoku_Size);
+            column = rng.Next(0, Sudoku_Size);
+
             int data = sudokuPlayer[row, column];
+            if (data == 0)
+            {
+                return prv;
+            }
+            
             sudokuPlayer[row, column] = 0;
             sudokuClues[row, column] = 0;
             SetConstraints();
+            //Console.WriteLine($"removed \nrow: {row + 1} \ncolumn: {column + 1}");
+            //CheckSet_andstop();
             if (!CheckBoard())
             {
                 sudokuPlayer[row, column] = data;
@@ -914,7 +946,7 @@ namespace Sudoku_Manger
             {
                 con.Remove(sudokuPlayer[row, i]);
                 con.Remove(sudokuPlayer[i, column]);
-                con.Remove(sudokuPlayer[numOfBoxRow * 3 + rowi, numOfBoxCuolmn * 3 + columni]);
+                con.Remove(sudokuPlayer[numOfBoxRow * sqrt + rowi, numOfBoxCuolmn * sqrt + columni]);
                 rowi++;
                 if (rowi == sqrt)
                 {
@@ -1036,8 +1068,8 @@ namespace Sudoku_Manger
             for (int i = 0; i < 3; i++)
             {
                 tmp.Add(i + 1);
-                
-                
+
+
             }
             constraints[0, 0] = new List<int>(tmp);
             constraints[1, 1] = new List<int>(tmp);
@@ -1051,11 +1083,11 @@ namespace Sudoku_Manger
         public void TestSolve()
         {
             SetBoardToZero();
-            
+
         }
         private void CheckSet_andstop()
         {
-            Console.WriteLine(this.ToString());
+            Console.WriteLine(this.ToString().Replace('0', ' '));
             string data = "";
             for (int i = 0; i < Sudoku_Size; i++)
             {
@@ -1090,18 +1122,17 @@ namespace Sudoku_Manger
             string data = "";
             for (int i = 0; i < Sudoku_Size; i++)
             {
-                for (int j = 0; j < Sudoku_Size; j++)
+
+
+                data += sudokuPlayer[i, 0];
+
+                for (int j = 1; j < Sudoku_Size; j++)
                 {
-                    if (sudokuPlayer[i, j] == 0)
-                    {
-                        data += "|" + " ";
-                    }
-                    else
-                    {
-                        data += "|" + sudokuPlayer[i, j];
-                    }
+
+                    data += "," + sudokuPlayer[i, j];
+
                 }
-                data += "|\n";
+                data += "\n";
             }
             return data;
         }

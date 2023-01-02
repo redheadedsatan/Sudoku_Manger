@@ -10,12 +10,13 @@ namespace suduku_test
     {
         static void Main(string[] args)
         {
-            Sudoku_manger sd;
-            SQL_DB_Manger.CreateTable();
+            SQL_DB_Manger.PrintTable();
+            SQL_DB_Manger.UpdateTable(1, "110",null,"245","356");
+            SQL_DB_Manger.PrintTable();
             //Sudoku_manger pain = new Sudoku_manger();
             //pain.CreateFullBoard();
-            //Console.WriteLine(pain.ToString());
+            // Console.WriteLine(pain.ToString().Replace('0',' '));
         }
-        
+
     }
 }
