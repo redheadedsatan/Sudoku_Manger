@@ -11,8 +11,12 @@ namespace suduku_test
         static void Main(string[] args)
         {
             SQL_DB_Manger.PrintTable();
-            SQL_DB_Manger.UpdateTable(1, "110",null,"245","356");
+            int id = SQL_DB_Manger.GetId("11");
             SQL_DB_Manger.PrintTable();
+            Console.WriteLine(id);
+            SQL_DB_Manger.RemoveFromTable(5);
+            SQL_DB_Manger.PrintTable();
+
             //Sudoku_manger pain = new Sudoku_manger();
             //pain.CreateFullBoard();
             // Console.WriteLine(pain.ToString().Replace('0',' '));

@@ -127,19 +127,16 @@ namespace SQL_MANGER
                 Close();
             }
         }
-
-        public static void InsertToTable(string name, string full, string clues, string player)
+        public static int InsertToTable(string name, string full, string clues, string player)
         {
-            // add sql injection check to name
+            
             string cmd = $"INSERT INTO {TABLE_NAME}({Table.NAME.ToString()},{Table.SUDOKUFULL.ToString()},{Table.SUDOKUCLUES.ToString()},{Table.SUDOKUPLAYER.ToString()})" +
                 $" VALUES('{name}','{full}','{clues}','{player}')";
             try
             {
                 Open();
-                Console.WriteLine("open");
                 SqlCommand SQLcmd = new SqlCommand(cmd, sqlconnection);
                 SQLcmd.ExecuteNonQuery();
-                Console.WriteLine("dataAdded");
             }
             catch (Exception e)
             {
@@ -150,8 +147,33 @@ namespace SQL_MANGER
             {
                 Close();
             }
+            
+            return GetId(name);
         }
+        public static int GetId(string name) 
+        {
+            string cmd = $"SELECT {Table.ID} FROM {TABLE_NAME} WHERE {Table.NAME.ToString()} = '{name}'";
+            try
+            {
+                Open();
+                SqlCommand SQLcmd = new SqlCommand(cmd, sqlconnection);
+                SqlDataReader reader = SQLcmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    return reader.GetInt32(0);
+                }
+            }
+            catch (Exception e)
+            {
 
+                Console.WriteLine(e.Message);
+            }
+            finally
+            {
+                Close();
+            }
+            return 0;
+        }
         public static void UpdateTable(int id, string name = null, string full = null, string clues = null, string player = null)
         {
             string cmd = BuildUpdateTablecmd(id, name, full, clues, player);
@@ -227,6 +249,28 @@ namespace SQL_MANGER
                 {
                     Console.WriteLine($"{reader.GetInt32(0)}, {reader.GetString(1)}, {reader.GetString(2)}, {reader.GetString(3)}, {reader.GetString(4)}");
                 }
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e.Message);
+            }
+            finally
+            {
+                Close();
+            }
+        }
+
+        public static void RemoveFromTable(int id) 
+        {
+            string cmd = $"DELETE FROM {TABLE_NAME} WHERE {Table.ID.ToString()} = {id}";
+            try
+            {
+                Open();
+                Console.WriteLine("open");
+                SqlCommand SQLcmd = new SqlCommand(cmd, sqlconnection);
+                SQLcmd.ExecuteNonQuery();
+                Console.WriteLine("data  removed");
             }
             catch (Exception e)
             {
