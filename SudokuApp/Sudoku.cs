@@ -28,6 +28,7 @@ namespace SudokuApp
 
         private void Form1_Load(object sender, EventArgs e)
         {
+
             sudoku_Board.SelectionMode = DataGridViewSelectionMode.CellSelect;
             string[] rowData = new string[Sudoku_size];
             for (int i = 0; i < Sudoku_size; i++)
@@ -39,7 +40,7 @@ namespace SudokuApp
                 column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
                 column.DefaultCellStyle.Font = new Font("Arial", (sudoku_Board.Height / (Sudoku_size * 1.5f)), GraphicsUnit.Pixel);
 
-                
+
 
                 sudoku_Board.Columns.Add(column);
                 sudoku_Board.Columns[i].Width = sudoku_Board.Width / Sudoku_size;
@@ -48,6 +49,7 @@ namespace SudokuApp
 
                 sudoku_Board.Rows[i].Height = sudoku_Board.Height / Sudoku_size;
             }
+
             LoadSudoku();
 
 
@@ -55,6 +57,8 @@ namespace SudokuApp
         }
         private void LoadSudoku()
         {
+            DataGridViewAdvancedBorderStyle style = new DataGridViewAdvancedBorderStyle();
+            style.Bottom = DataGridViewAdvancedCellBorderStyle.OutsetDouble;
             sudokuTable = new Sudoku_manger();
             sudokuTable.CreateFullBoard();
 
@@ -67,12 +71,12 @@ namespace SudokuApp
                         sudoku_Board.Rows[i].Cells[j].Value = sudokuTable.sudokuClues[i, j];
                         sudoku_Board.Rows[i].Cells[j].ReadOnly = true;
                         sudoku_Board.Rows[i].Cells[j].Style.BackColor = Color.Gray;
-
-
                     }
                 }
             }
         }
+
+
         private void sudoku_Board_Resize(object sender, EventArgs e)
         {
             for (int i = 0; i < Sudoku_size; i++)
@@ -100,7 +104,7 @@ namespace SudokuApp
         }
         private void polNoDataGridViewTextBoxColumn_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            if ((!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) || e.KeyChar == '0')
             {
                 e.Handled = true;
             }
@@ -152,14 +156,39 @@ namespace SudokuApp
                         {
                             sudoku_Board.Rows[i].Cells[j].Style.BackColor = Color.Red;
                         }
-                        else if(sudokuTable.sudokuClues[i, j] == 0)
+                        else if (sudokuTable.sudokuClues[i, j] == 0)
                         {
                             sudoku_Board.Rows[i].Cells[j].Style.BackColor = Color.White;
                         }
                     }
                 }
-                
+
             }
+        }
+
+        private void sudoku_Board_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            e.Handled = true;
+            e.PaintBackground(e.ClipBounds, true);
+            if (e.RowIndex == 2 || e.RowIndex == 5)
+            {
+                using (Pen p = new Pen(Brushes.Black))
+                {
+                    p.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+                    p.Width = 6;
+                    e.Graphics.DrawLine(p, new Point(0, e.CellBounds.Bottom - 1), new Point(e.CellBounds.Right, e.CellBounds.Bottom - 1));
+                }   
+            }
+            if (e.ColumnIndex == 2 || e.ColumnIndex == 5)
+            {
+                using (Pen p = new Pen(Brushes.Black))
+                {
+                    p.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+                    p.Width = 6;
+                    e.Graphics.DrawLine(p, new Point(e.CellBounds.Right - 1, e.CellBounds.Top), new Point(e.CellBounds.Right - 1, e.CellBounds.Bottom));
+                }
+            }
+            e.PaintContent(e.ClipBounds);
         }
     }
 }

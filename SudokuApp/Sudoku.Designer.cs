@@ -38,6 +38,7 @@ namespace SudokuApp
             // 
             this.sudoku_Board.AllowUserToAddRows = false;
             this.sudoku_Board.AllowUserToDeleteRows = false;
+            this.sudoku_Board.AllowUserToResizeColumns = false;
             this.sudoku_Board.AllowUserToResizeRows = false;
             this.sudoku_Board.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
@@ -50,12 +51,14 @@ namespace SudokuApp
             this.sudoku_Board.Size = new System.Drawing.Size(601, 600);
             this.sudoku_Board.TabIndex = 0;
             this.sudoku_Board.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.sudoku_Board_CellEndEdit);
+            this.sudoku_Board.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.sudoku_Board_CellPainting);
             this.sudoku_Board.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.sudoku_Board_EditingControlShowing);
             this.sudoku_Board.MouseDown += new System.Windows.Forms.MouseEventHandler(this.sudoku_Board_MouseDown);
             this.sudoku_Board.Resize += new System.EventHandler(this.sudoku_Board_Resize);
             // 
             // Check
             // 
+            this.Check.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.Check.Location = new System.Drawing.Point(251, 618);
             this.Check.Name = "Check";
             this.Check.Size = new System.Drawing.Size(80, 23);
