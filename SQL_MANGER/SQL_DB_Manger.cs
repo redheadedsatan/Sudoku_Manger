@@ -95,6 +95,7 @@ namespace SQL_MANGER
                 }
                 catch (Exception e)
                 {
+                    
                     // Console.WriteLine(e.Message);
                 }
                 finally

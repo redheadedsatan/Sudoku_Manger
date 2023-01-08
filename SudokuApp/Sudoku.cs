@@ -15,180 +15,234 @@ using Sudoku_Manger;
 
 namespace SudokuApp
 {
-    public partial class Sudoku : Form
+    public partial class SudokuName : Form
     {
         private int Sudoku_size = 9;
-        private Sudoku_manger sudokuTable;
-        public Sudoku()
+        private Sudoku_manger sudokuManage;
+        public SudokuName()
         {
 
             InitializeComponent();
 
         }
-
+        TextBox[,] sudoku_Player;
+        List<Panel> linesW;
+        List<Panel> linesH;
+        bool writePossNum = false;
         private void Form1_Load(object sender, EventArgs e)
         {
-
-            sudoku_Board.SelectionMode = DataGridViewSelectionMode.CellSelect;
-            string[] rowData = new string[Sudoku_size];
-            for (int i = 0; i < Sudoku_size; i++)
-            {
-                DataGridViewTextBoxColumn column = new DataGridViewTextBoxColumn();
-                column.Name = "Column" + (i + 1);
-                column.Width = 60;
-                column.MaxInputLength = 1;
-                column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                column.DefaultCellStyle.Font = new Font("Arial", (sudoku_Board.Height / (Sudoku_size * 1.5f)), GraphicsUnit.Pixel);
-
-
-
-                sudoku_Board.Columns.Add(column);
-                sudoku_Board.Columns[i].Width = sudoku_Board.Width / Sudoku_size;
-
-                sudoku_Board.Rows.Add(rowData);
-
-                sudoku_Board.Rows[i].Height = sudoku_Board.Height / Sudoku_size;
-            }
-
-            LoadSudoku();
-
-
-
-        }
-        private void LoadSudoku()
-        {
-            DataGridViewAdvancedBorderStyle style = new DataGridViewAdvancedBorderStyle();
-            style.Bottom = DataGridViewAdvancedCellBorderStyle.OutsetDouble;
-            sudokuTable = new Sudoku_manger();
-            sudokuTable.CreateFullBoard();
-
+            sudokuManage = new Sudoku_manger();
+            sudokuManage.CreateFullBoard();
+            DrawLine();
+            sudoku_Player = new TextBox[Sudoku_size, Sudoku_size];
             for (int i = 0; i < Sudoku_size; i++)
             {
                 for (int j = 0; j < Sudoku_size; j++)
                 {
-                    if (sudokuTable.sudokuClues[i, j] != 0)
+
+                    sudoku_Player[i, j] = SetCell(i, j);
+                    if (sudokuManage.sudokuClues[i, j] != 0)
                     {
-                        sudoku_Board.Rows[i].Cells[j].Value = sudokuTable.sudokuClues[i, j];
-                        sudoku_Board.Rows[i].Cells[j].ReadOnly = true;
-                        sudoku_Board.Rows[i].Cells[j].Style.BackColor = Color.Gray;
+                        sudokuManage.SetPlayerNumber(i,j, sudokuManage.sudokuClues[i, j]);
+                        sudoku_Player[i, j].Text = sudokuManage.sudokuClues[i, j].ToString();
+                        sudoku_Player[i, j].ReadOnly = true;
+                        sudoku_Player[i, j].BackColor = Color.Gray;
+
                     }
+                    sudoku_Table.Controls.Add(sudoku_Player[i, j]);
+
                 }
             }
         }
-
-
-        private void sudoku_Board_Resize(object sender, EventArgs e)
+        private TextBox SetCell(int row, int column)
         {
+            TextBox cell = new TextBox();
+            cell.Name = $"t{row}{column}";
+            cell.BorderStyle = BorderStyle.None;
+            cell.Multiline = true;
+            cell.Location = new Point(column * (sudoku_Table.Size.Width / Sudoku_size), row * (sudoku_Table.Size.Height / Sudoku_size));
+            cell.Height = (int)((sudoku_Table.Size.Height / Sudoku_size));
+            cell.Width = sudoku_Table.Size.Width / Sudoku_size;
+            cell.TextAlign = HorizontalAlignment.Center;
+            cell.MaxLength = 1;
+            cell.Enter += new System.EventHandler(Text_Select);
+            cell.Leave += new System.EventHandler(Text_Leave);
+            cell.KeyPress += new KeyPressEventHandler(Enter_Value); ;
+            cell.Font = new Font("Arial", 0.6f * cell.Height);
+            return cell;
+        }
+        private void DrawLine()
+        {
+            linesH = new List<Panel>();
+            linesW = new List<Panel>();
+            int mod = 0;
             for (int i = 0; i < Sudoku_size; i++)
             {
-                sudoku_Board.Rows[i].Height = sudoku_Board.Height / Sudoku_size;
-                if (sudoku_Board.Height > 0)
-                {
-                    sudoku_Board.Columns[i].DefaultCellStyle.Font = new Font("Arial", (sudoku_Board.Height / (Sudoku_size * 1.5f)), GraphicsUnit.Pixel);
-                    sudoku_Board.Columns[i].Width = sudoku_Board.Width / Sudoku_size;
-                }
-
+                Panel lineW = new Panel();
+                lineW.Width = 1;
+                lineW.Height = sudoku_Table.Height - mod;
+                lineW.Location = new Point(i * (sudoku_Table.Size.Width / Sudoku_size), 0);
+                lineW.Enabled = false;
+                lineW.BackColor = Color.Black;
+                sudoku_Table.Controls.Add(lineW);
+                linesW.Add(lineW);
+                Panel lineH = new Panel();
+                lineH.Width = sudoku_Table.Width - mod;
+                lineH.Height = 1;
+                lineH.Location = new Point(0, i * (sudoku_Table.Size.Height / Sudoku_size));
+                lineH.Enabled = false;
+                lineH.BackColor = Color.Black;
+                sudoku_Table.Controls.Add(lineH);
+                linesH.Add(lineH);
             }
+            Panel endw = new Panel();
+            endw.Width = 1;
+            endw.Height = sudoku_Table.Height - mod;
+            endw.Location = new Point(Sudoku_size * (sudoku_Table.Size.Width / Sudoku_size), 0);
+            endw.Enabled = false;
+            endw.BackColor = Color.Black;
+            sudoku_Table.Controls.Add(endw);
+            linesW.Add(endw);
+            Panel endH = new Panel();
+            endH.Width = sudoku_Table.Width - mod;
+            endH.Height = 1;
+            endH.Location = new Point(0, Sudoku_size * (sudoku_Table.Size.Height / Sudoku_size));
+            endH.Enabled = false;
+            endH.BackColor = Color.Black;
+            sudoku_Table.Controls.Add(endH);
+            linesH.Add(endH);
+
         }
-
-        private void sudoku_Board_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        private void sudoku_Table_SizeChanged(object sender, EventArgs e)
         {
-            e.Control.KeyPress -= new KeyPressEventHandler(polNoDataGridViewTextBoxColumn_KeyPress);
-
-            TextBox tb = e.Control as TextBox;
-            if (tb != null)
+            int mod = 0;
+            for (int i = 0; i < Sudoku_size; i++)
             {
-                tb.KeyPress += new KeyPressEventHandler(polNoDataGridViewTextBoxColumn_KeyPress);
+                for (int j = 0; j < Sudoku_size; j++)
+                {
+                    TextBox cell = SetCell(i, j);
+                    sudoku_Player[i, j].Location = cell.Location;
+                    sudoku_Player[i, j].Size = cell.Size;
+                    sudoku_Player[i, j].Font = cell.Font;
+                }
+            }
+            for (int i = 0; i < linesH.Count; i++)
+            {
+                linesH[i].Location = new Point(0, i * (sudoku_Table.Size.Height / Sudoku_size));
+                linesH[i].Width = sudoku_Table.Width - mod;
+                linesW[i].Location = new Point(i * (sudoku_Table.Size.Width / Sudoku_size), 0);
+                linesW[i].Height = sudoku_Table.Height - mod;
+            }
+        }
+        private void Text_Select(object sender, EventArgs e)
+        {
+            TextBox data = (TextBox)sender;
+            if (data.BackColor != Color.Gray)
+            {
+                data.BackColor = Color.Aqua;
+            }
+           
+        }
+        private void Text_Leave(object sender, EventArgs e)
+        {
+            TextBox data = (TextBox)sender;
+            if (data.BackColor != Color.Gray)
+            {
+                data.BackColor = Color.White;
             }
 
         }
-        private void polNoDataGridViewTextBoxColumn_KeyPress(object sender, KeyPressEventArgs e)
+        private void Enter_Value(object sender, KeyPressEventArgs e)
         {
-            if ((!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) || e.KeyChar == '0')
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
             {
                 e.Handled = true;
             }
-        }
-
-        private void sudoku_Board_CellEndEdit(object sender, DataGridViewCellEventArgs e)
-        {
-            if (sudoku_Board.SelectedCells[0].Value != null)
+            else if(!writePossNum)
             {
-                sudokuTable.SetPlayerNumber(sudoku_Board.SelectedCells[0].RowIndex, sudoku_Board.SelectedCells[0].ColumnIndex,
-                    int.Parse(sudoku_Board.SelectedCells[0].Value.ToString()));
-            }
-        }
-
-        private void sudoku_Board_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                var hti = sudoku_Board.HitTest(e.X, e.Y);
-                if (hti.RowIndex >= 0)
+                TextBox data = (TextBox)sender;
+                data.MaxLength = 1;
+                data.TextAlign = HorizontalAlignment.Center;
+                data.Font = new Font("Arial", 0.6f * data.Height);
+                if (e.KeyChar == '\b')
                 {
-                    sudoku_Board.ClearSelection();
-                    sudoku_Board.CurrentCell = sudoku_Board[hti.ColumnIndex, hti.RowIndex];
+                    sudokuManage.SetPlayerNumber(int.Parse(data.Name[1].ToString()), int.Parse(data.Name[2].ToString()), 0);
+                    data.Text = "";
                 }
-            }
-        }
-
-        private void Check_Click(object sender, EventArgs e)
-        {
-
-            List<Tuple<int, int>> mistakes = sudokuTable.checkSudoku();
-            if (mistakes.Count == 0)
-            {
-                for (int i = 0; i < Sudoku_size; i++)
+                else
                 {
-                    for (int j = 0; j < Sudoku_size; j++)
-                    {
-                        sudoku_Board.Rows[i].Cells[j].Style.BackColor = Color.Green;
-                    }
+                    sudokuManage.SetPlayerNumber(int.Parse(data.Name[1].ToString()), int.Parse(data.Name[2].ToString()), int.Parse(e.KeyChar.ToString()));
+                    data.Text = e.KeyChar.ToString();
                 }
+                if (AutoCheck.Checked)
+                {
+                    check();
+                }
+                
             }
             else
             {
-                for (int i = 0; i < Sudoku_size; i++)
+                TextBox data = (TextBox)sender;
+                data.MaxLength = 9;
+                data.TextAlign = HorizontalAlignment.Left;
+                data.Font = new Font("Arial", 0.2f * data.Height);
+                if (data.Text.Contains(e.KeyChar))
                 {
-                    for (int j = 0; j < Sudoku_size; j++)
-                    {
-                        if (mistakes.Contains(new Tuple<int, int>(i, j)))
-                        {
-                            sudoku_Board.Rows[i].Cells[j].Style.BackColor = Color.Red;
-                        }
-                        else if (sudokuTable.sudokuClues[i, j] == 0)
-                        {
-                            sudoku_Board.Rows[i].Cells[j].Style.BackColor = Color.White;
-                        }
-                    }
+                    e.Handled = true;
                 }
-
+               
             }
         }
-
-        private void sudoku_Board_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        private void sudoku_Table_Enter(object sender, EventArgs e)
         {
-            e.Handled = true;
-            e.PaintBackground(e.ClipBounds, true);
-            if (e.RowIndex == 2 || e.RowIndex == 5)
+
+        }
+
+        private void checkBut_Click(object sender, EventArgs e)
+        {
+            check();
+        }
+        private void check() 
+        {
+            List<Tuple<int, int>> errors = sudokuManage.checkSudoku();
+            for (int i = 0; i < Sudoku_size; i++)
             {
-                using (Pen p = new Pen(Brushes.Black))
+                for (int j = 0; j < Sudoku_size; j++)
                 {
-                    p.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
-                    p.Width = 6;
-                    e.Graphics.DrawLine(p, new Point(0, e.CellBounds.Bottom - 1), new Point(e.CellBounds.Right, e.CellBounds.Bottom - 1));
-                }   
-            }
-            if (e.ColumnIndex == 2 || e.ColumnIndex == 5)
-            {
-                using (Pen p = new Pen(Brushes.Black))
-                {
-                    p.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
-                    p.Width = 6;
-                    e.Graphics.DrawLine(p, new Point(e.CellBounds.Right - 1, e.CellBounds.Top), new Point(e.CellBounds.Right - 1, e.CellBounds.Bottom));
+                    if (sudokuManage.sudokuClues[i, j] == 0)
+                    {
+                        sudoku_Player[i, j].BackColor = Color.White;
+                    }
+                    else
+                    {
+                        sudoku_Player[i, j].ForeColor = Color.Black;
+                    }
                 }
             }
-            e.PaintContent(e.ClipBounds);
+
+            for (int i = 0; i < errors.Count; i++)
+            {
+                if (sudokuManage.sudokuClues[errors[i].Item1, errors[i].Item2] != 0)
+                {
+                    sudoku_Player[errors[i].Item1, errors[i].Item2].ForeColor = Color.Red;
+                }
+                else
+                {
+                    sudoku_Player[errors[i].Item1, errors[i].Item2].BackColor = Color.Red;
+                }
+            }
+        }
+        private void write_Poss_Values_CheckedChanged(object sender, EventArgs e)
+        {
+            writePossNum = !writePossNum;
+        }
+
+        private void SudokuName_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == 'q' || e.KeyChar == 'Q')
+            {
+                write_Poss_Values.Checked = !writePossNum;
+            }
         }
     }
 }

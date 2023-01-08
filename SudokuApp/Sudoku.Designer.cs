@@ -1,7 +1,7 @@
 ﻿
 namespace SudokuApp
 {
-    partial class Sudoku
+    partial class SudokuName
     {
         /// <summary>
         /// Required designer variable.
@@ -29,63 +29,91 @@ namespace SudokuApp
         /// </summary>
         private void InitializeComponent()
         {
-            this.sudoku_Board = new System.Windows.Forms.DataGridView();
-            this.Check = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.sudoku_Board)).BeginInit();
+            this.write_Poss_Values = new System.Windows.Forms.CheckBox();
+            this.sudoku_Table = new System.Windows.Forms.GroupBox();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.AutoCheck = new System.Windows.Forms.CheckBox();
+            this.checkBut = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // sudoku_Board
+            // write_Poss_Values
             // 
-            this.sudoku_Board.AllowUserToAddRows = false;
-            this.sudoku_Board.AllowUserToDeleteRows = false;
-            this.sudoku_Board.AllowUserToResizeColumns = false;
-            this.sudoku_Board.AllowUserToResizeRows = false;
-            this.sudoku_Board.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.write_Poss_Values.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.write_Poss_Values.AutoSize = true;
+            this.write_Poss_Values.Location = new System.Drawing.Point(8, 622);
+            this.write_Poss_Values.Name = "write_Poss_Values";
+            this.write_Poss_Values.Size = new System.Drawing.Size(231, 17);
+            this.write_Poss_Values.TabIndex = 1;
+            this.write_Poss_Values.Text = "write possible values(pressing  q toggle this)";
+            this.write_Poss_Values.UseVisualStyleBackColor = true;
+            this.write_Poss_Values.CheckedChanged += new System.EventHandler(this.write_Poss_Values_CheckedChanged);
+            // 
+            // sudoku_Table
+            // 
+            this.sudoku_Table.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.sudoku_Board.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.sudoku_Board.ColumnHeadersVisible = false;
-            this.sudoku_Board.Location = new System.Drawing.Point(12, 12);
-            this.sudoku_Board.Name = "sudoku_Board";
-            this.sudoku_Board.RowHeadersVisible = false;
-            this.sudoku_Board.Size = new System.Drawing.Size(601, 600);
-            this.sudoku_Board.TabIndex = 0;
-            this.sudoku_Board.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.sudoku_Board_CellEndEdit);
-            this.sudoku_Board.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.sudoku_Board_CellPainting);
-            this.sudoku_Board.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.sudoku_Board_EditingControlShowing);
-            this.sudoku_Board.MouseDown += new System.Windows.Forms.MouseEventHandler(this.sudoku_Board_MouseDown);
-            this.sudoku_Board.Resize += new System.EventHandler(this.sudoku_Board_Resize);
+            this.sudoku_Table.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.sudoku_Table.BackColor = System.Drawing.Color.White;
+            this.sudoku_Table.Location = new System.Drawing.Point(12, 12);
+            this.sudoku_Table.Margin = new System.Windows.Forms.Padding(0);
+            this.sudoku_Table.MinimumSize = new System.Drawing.Size(180, 180);
+            this.sudoku_Table.Name = "sudoku_Table";
+            this.sudoku_Table.Padding = new System.Windows.Forms.Padding(0);
+            this.sudoku_Table.Size = new System.Drawing.Size(600, 575);
+            this.sudoku_Table.TabIndex = 2;
+            this.sudoku_Table.TabStop = false;
+            this.sudoku_Table.SizeChanged += new System.EventHandler(this.sudoku_Table_SizeChanged);
+            this.sudoku_Table.Enter += new System.EventHandler(this.sudoku_Table_Enter);
             // 
-            // Check
+            // AutoCheck
             // 
-            this.Check.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.Check.Location = new System.Drawing.Point(251, 618);
-            this.Check.Name = "Check";
-            this.Check.Size = new System.Drawing.Size(80, 23);
-            this.Check.TabIndex = 1;
-            this.Check.Text = "Check";
-            this.Check.UseVisualStyleBackColor = true;
-            this.Check.Click += new System.EventHandler(this.Check_Click);
+            this.AutoCheck.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.AutoCheck.AutoSize = true;
+            this.AutoCheck.Location = new System.Drawing.Point(8, 599);
+            this.AutoCheck.Name = "AutoCheck";
+            this.AutoCheck.Size = new System.Drawing.Size(80, 17);
+            this.AutoCheck.TabIndex = 3;
+            this.AutoCheck.Text = "auto check";
+            this.AutoCheck.UseVisualStyleBackColor = true;
             // 
-            // Sudoku
+            // checkBut
+            // 
+            this.checkBut.Location = new System.Drawing.Point(94, 595);
+            this.checkBut.Name = "checkBut";
+            this.checkBut.Size = new System.Drawing.Size(98, 23);
+            this.checkBut.TabIndex = 4;
+            this.checkBut.Text = "Manual Check";
+            this.checkBut.UseVisualStyleBackColor = true;
+            this.checkBut.Click += new System.EventHandler(this.checkBut_Click);
+            // 
+            // SudokuName
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(624, 650);
-            this.Controls.Add(this.Check);
-            this.Controls.Add(this.sudoku_Board);
-            this.Name = "Sudoku";
+            this.ClientSize = new System.Drawing.Size(624, 651);
+            this.Controls.Add(this.checkBut);
+            this.Controls.Add(this.AutoCheck);
+            this.Controls.Add(this.sudoku_Table);
+            this.Controls.Add(this.write_Poss_Values);
+            this.DoubleBuffered = true;
+            this.KeyPreview = true;
+            this.MinimumSize = new System.Drawing.Size(220, 290);
+            this.Name = "SudokuName";
             this.Text = "sudoku";
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.sudoku_Board)).EndInit();
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.SudokuName_KeyPress);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.DataGridView sudoku_Board;
-        private System.Windows.Forms.Button Check;
+        private System.Windows.Forms.CheckBox write_Poss_Values;
+        private System.Windows.Forms.GroupBox sudoku_Table;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.CheckBox AutoCheck;
+        private System.Windows.Forms.Button checkBut;
     }
 }
 

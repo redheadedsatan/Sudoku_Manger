@@ -1225,7 +1225,7 @@ namespace Sudoku_Manger
             {
                 for (int j = 0; j < Column_Size; j++)
                 {
-                    if (sudokuPlayer[i,j] != FullBoard[i,j])
+                    if (sudokuPlayer[i, j] != 0 && (CheckRow(i,sudokuPlayer[i,j]) || CheckColumn(j, sudokuPlayer[i, j]) || CheckRegion(i,j, sudokuPlayer[i, j])))
                     {
                         wrongCells.Add(new Tuple<int, int>(i, j));
                     }
@@ -1234,6 +1234,71 @@ namespace Sudoku_Manger
             return wrongCells;
 
         }
-       
+        public bool CheckRow(int row,int value) 
+        {
+            int counter = 0;
+            for (int i = 0; i < Sudoku_Size; i++)
+            {
+                if (sudokuPlayer[row,i] == value)
+                {
+                    counter++;
+                }
+            }
+            if (counter == 1)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        public bool CheckColumn(int column, int value)
+        {
+            int counter = 0;
+            for (int i = 0; i < Sudoku_Size; i++)
+            {
+                if (sudokuPlayer[i, column] == value)
+                {
+                    counter++;
+                }
+            }
+            if (counter == 1)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        public bool CheckRegion(int row,int column,int value) 
+        {
+            row /= sqrt;
+            column /= sqrt;
+            row *= sqrt;
+            column *= sqrt;
+            int counter = 0;
+            for (int i = row; i < row + sqrt; i++)
+            {
+                for (int j = column; j < column + sqrt; j++)
+                {
+                    if (sudokuPlayer[i, j] == value)
+                    {
+                        counter++;
+                    }
+                }
+                
+            }
+            if (counter == 1)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
     }
 }
