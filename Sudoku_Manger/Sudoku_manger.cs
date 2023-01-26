@@ -30,10 +30,6 @@ namespace Sudoku_Manger
             SetSudokuSizes(sudokuRegionSize);
             Create_Sudoku();
         }
-        public Sudoku_manger(int id, string full, string clues, string player)
-        {
-            sqlId = id;
-        }
         public void SetSudokuSizes(int sudokuRegionSize = 3)
         {
             Row_size = (int)(Math.Pow(sudokuRegionSize, 2.0));
@@ -48,6 +44,74 @@ namespace Sudoku_Manger
             constraints = new List<int>[Row_size, Column_Size];
             FullBoard = new int[Row_size, Column_Size];
         }
+        public Sudoku_manger(int id, string full, string clues, string player, string constrains)
+        {
+            sqlId = id;
+            SetSudokuSizes(3);
+            Create_Sudoku();
+            SetFull(full);
+            SetClues(clues);
+            SetPlayer(player);
+            SetConstrains(constrains);
+        }
+        private void SetFull(string full)
+        {
+            string[] data = full.Split('\n');
+            for (int i = 0; i < Sudoku_Size; i++)
+            {
+                string[] row = data[i].Split(',');
+                for (int j = 0; j < Sudoku_Size; j++)
+                {
+                    FullBoard[i, j] = int.Parse(row[j]);
+                }
+            }
+        }
+        private void SetClues(string clues)
+        {
+            string[] data = clues.Split('\n');
+            for (int i = 0; i < Sudoku_Size; i++)
+            {
+                string[] row = data[i].Split(',');
+                for (int j = 0; j < Sudoku_Size; j++)
+                {
+                    if (int.Parse(row[j]) != 0)
+                    {
+                        sudokuClues[i, j] = int.Parse(row[j]);
+                    }
+                }
+            }
+        }
+        private void SetPlayer(string player)
+        {
+            string[] data = player.Split('\n');
+            for (int i = 0; i < Sudoku_Size; i++)
+            {
+                string[] row = data[i].Split(',');
+                for (int j = 0; j < Sudoku_Size; j++)
+                {
+                    if (int.Parse(row[j]) != 0)
+                    {
+                        sudokuPlayer[i, j] = int.Parse(row[j]);
+                    }
+                }
+            }
+        }
+        private void SetConstrains(string constrains)
+        {
+            string[] data = constrains.Split('\n');
+            for (int i = 0; i < Sudoku_Size; i++)
+            {
+                string[] row = data[i].Split(',');
+                for (int j = 0; j < Sudoku_Size; j++)
+                {
+                    constraints[i, j] = new List<int>();
+                    for (int z = 0; z < row[j].Length; z++)
+                    {
+                        constraints[i, j].Add((int)row[j][z]);
+                    }
+                }
+            }
+        }
         public void CreateFullBoard()
         {
             do
@@ -59,6 +123,16 @@ namespace Sudoku_Manger
             //CheckSet_andstop();
             RemoveValues();
             //CheckSet_andstop();
+            List<int> arrayInt = new List<int>();
+            for (int i = 0; i < Row_size; i++)
+            {
+                for (int j = 0; j < Column_Size; j++)
+                {
+                    sudokuPlayer[i, j] = 0;
+                    constraints[i, j] = new List<int>(arrayInt);
+
+                }
+            }
         }
         private void SetBoardToZero()
         {
@@ -95,14 +169,14 @@ namespace Sudoku_Manger
                     }
                 }
             }
-            
+
             return true;
         }
         public void SetNum(int row, int column, int value)
         {
             if (value > 0 && value <= Sudoku_Size)
             {
-                lastCell = new Tuple<int, int, int>(row,column,value);
+                lastCell = new Tuple<int, int, int>(row, column, value);
                 if (countSolves != -1)
                 {
                     countSolves--;
@@ -892,7 +966,7 @@ namespace Sudoku_Manger
         }
         #endregion
 
-        #region RemoveValueOfCelsForSuduk
+        #region RemoveValueOfCellsForSudoku
         private void RemoveValues()
         {
             SetBoard();
@@ -926,7 +1000,7 @@ namespace Sudoku_Manger
                     counter++;
                 }
                 RestoreBoard();
-                
+
 
             }
             while (counter < 10);
@@ -967,7 +1041,7 @@ namespace Sudoku_Manger
                 return true;
             }
         }
-        private void SetConstraints()
+        public void SetConstraints()
         {
             for (int i = 0; i < Row_size; i++)
             {
@@ -1007,6 +1081,7 @@ namespace Sudoku_Manger
                     rowi = 0;
                 }
             }
+            constraints[row, column].Clear();
             for (int i = 0; i < con.Count; i++)
             {
                 constraints[row, column].Add(con[i]);
@@ -1237,6 +1312,27 @@ namespace Sudoku_Manger
             }
             return data;
         }
+        public string ToStringConstrains()
+        {
+            string data = "";
+            for (int i = 0; i < Sudoku_Size; i++)
+            {
+                for (int z = 0; z < constraints[i, 0].Count; z++)
+                {
+                    data += constraints[i, 0][z];
+                }
+                for (int j = 1; j < Sudoku_Size; j++)
+                {
+                    data += ",";
+                    for (int z = 0; z < constraints[i, j].Count; z++)
+                    {
+                        data += constraints[i, j][z];
+                    }
+                }
+                data += "\n";
+            }
+            return data;
+        }
         #endregion
 
         public void SetPlayerNumber(int row, int column, int value)
@@ -1244,14 +1340,14 @@ namespace Sudoku_Manger
             sudokuPlayer[row, column] = value;
             RemoveConstraints(row, column, value);
         }
-        public List<Tuple<int,int>> checkSudoku() 
+        public List<Tuple<int, int>> checkSudoku()
         {
             List<Tuple<int, int>> wrongCells = new List<Tuple<int, int>>();
             for (int i = 0; i < Row_size; i++)
             {
                 for (int j = 0; j < Column_Size; j++)
                 {
-                    if (sudokuPlayer[i, j] != 0 && (CheckRow(i,sudokuPlayer[i,j]) || CheckColumn(j, sudokuPlayer[i, j]) || CheckRegion(i,j, sudokuPlayer[i, j])))
+                    if (sudokuPlayer[i, j] != 0 && (CheckRow(i, sudokuPlayer[i, j]) || CheckColumn(j, sudokuPlayer[i, j]) || CheckRegion(i, j, sudokuPlayer[i, j])))
                     {
                         wrongCells.Add(new Tuple<int, int>(i, j));
                     }
@@ -1260,12 +1356,12 @@ namespace Sudoku_Manger
             return wrongCells;
 
         }
-        public bool CheckRow(int row,int value) 
+        public bool CheckRow(int row, int value)
         {
             int counter = 0;
             for (int i = 0; i < Sudoku_Size; i++)
             {
-                if (sudokuPlayer[row,i] == value)
+                if (sudokuPlayer[row, i] == value)
                 {
                     counter++;
                 }
@@ -1298,7 +1394,7 @@ namespace Sudoku_Manger
                 return true;
             }
         }
-        public bool CheckRegion(int row,int column,int value) 
+        public bool CheckRegion(int row, int column, int value)
         {
             row /= sqrt;
             column /= sqrt;
@@ -1314,7 +1410,7 @@ namespace Sudoku_Manger
                         counter++;
                     }
                 }
-                
+
             }
             if (counter == 1)
             {
@@ -1325,14 +1421,14 @@ namespace Sudoku_Manger
                 return true;
             }
         }
-        public Tuple<int,int,int> Solve_OneCell() 
+        public Tuple<int, int, int> Solve_OneCell()
         {
             countSolves = 1;
             SetNum(0, 0, 0);
             countSolves = -1;
             return lastCell;
-            
+
         }
-    
+
     }
 }
